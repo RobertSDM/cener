@@ -1,0 +1,34 @@
+{
+    "name": "url_shortener",
+    "version": "1.0.0",
+    "description": "Short the your url",
+    "main": "main.js",
+    "type": "module",
+    "scripts": {
+        "start:server": "cls && node dist/app/links_api.js --watch",
+        "start:tsc": "tsc --watch",
+        "build": "npx prisma generate && tsc --build --verbose"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/RobertSDM/url_shortener.git"
+    },
+    "author": "RobertSDM",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/RobertSDM/url_shortener/issues"
+    },
+    "homepage": "https://github.com/RobertSDM/url_shortener#readme",
+    "devDependencies": {
+        "@fastify/cors": "^8.4.2",
+        "@prisma/client": "^5.7.0",
+        "@types/node": "^20.10.4",
+        "fastify": "^4.25.1",
+        "prisma": "^5.7.0",
+        "tsc": "^2.0.4",
+        "typescript": "^5.3.3"
+    },
+    "dependencies": {
+        "@fastify/middie": "^8.3.0"
+    }
+}
