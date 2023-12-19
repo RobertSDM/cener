@@ -21,9 +21,7 @@ server.addHook("onRequest", (request, reply, done) => {
         "/create",
     ];
     // Get the first param
-    const currentURL = request.routerPath;
-    console.log(currentURL);
-    console.log("/get/links/:id" === currentURL);
+    const currentURL = request.routeOptions.url;
     if (ROUTES_TO_MIDDLEWARE.includes(currentURL)) {
         const { authorization: auth } = request.headers;
         if (auth === process.env.AUTH_APIS) {
@@ -43,18 +41,18 @@ server.addHook("onRequest", (request, reply, done) => {
 server.addHook("preHandler", (request, reply, done) => {
     const FREE_ROUTES = ["/r/:id"];
     const { origin } = request.headers;
-    const currentURL = request.routerPath;
+    const currentURL = request.routeOptions.url;
     if (FREE_ROUTES.includes(currentURL)) {
         reply.header("access-control-allow-origin", "*");
         done();
     }
-    else if ((origin === null || origin === void 0 ? void 0 : origin.length) && origin === "127.0.0.1") {
+    else if ((origin === null || origin === void 0 ? void 0 : origin.length) && origin === "http://127.0.0.1:5500") {
         done();
     }
     else {
         reply.statusCode = 401;
         reply.send({
-            Message: "No authorized",
+            Message: "Origin not authorized",
             Content: null,
         });
         done();
@@ -140,9 +138,11 @@ server.delete("/delete/:id", (request, reply) => {
 // Endpoint to redirect
 server.get("/r/:id", (request, reply) => {
     const { id } = request.params;
+    console.log("entrou");
     getLinkById(id).then((link) => {
         var _a;
-        reply.status(200);
+        console.log(link === null || link === void 0 ? void 0 : link.original_link);
+        reply.status(307);
         reply.redirect((_a = link === null || link === void 0 ? void 0 : link.original_link) !== null && _a !== void 0 ? _a : process.env.HOME_URL);
     });
 });
