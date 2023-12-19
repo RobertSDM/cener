@@ -46,7 +46,7 @@ server.addHook("preHandler", (request, reply, done) => {
         reply.header("access-control-allow-origin", "*");
         done();
     }
-    else if ((origin === null || origin === void 0 ? void 0 : origin.length) && origin === "http://127.0.0.1:5500") {
+    else if ((origin === null || origin === void 0 ? void 0 : origin.length) && origin === process.env.HOME_URL) {
         done();
     }
     else {

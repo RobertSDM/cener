@@ -58,7 +58,7 @@ server.addHook("preHandler", (request, reply, done) => {
     if (FREE_ROUTES.includes(currentURL)) {
         reply.header("access-control-allow-origin", "*");
         done();
-    } else if (origin?.length && origin === "http://127.0.0.1:5500") {
+    } else if (origin?.length && origin === process.env.HOME_URL) {
         done();
     } else {
         reply.statusCode = 401;
@@ -160,7 +160,7 @@ server.get("/r/:id", (request, reply) => {
     console.log("entrou");
     getLinkById(id).then((link) => {
         console.log(link?.original_link);
-        reply.status(307)
+        reply.status(307);
         reply.redirect(link?.original_link ?? process.env.HOME_URL!);
     });
 });

@@ -5,7 +5,7 @@
     "main": "main.js",
     "type": "module",
     "scripts": {
-        "start:server": "cls && node dist/app/links_api.js --watch",
+        "start:server": "node dist/app/links_api.js --watch",
         "start:tsc": "tsc --watch",
         "build": "npx prisma generate && tsc --build --verbose"
     },
