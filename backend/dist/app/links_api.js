@@ -138,10 +138,8 @@ server.delete("/delete/:id", (request, reply) => {
 // Endpoint to redirect
 server.get("/r/:id", (request, reply) => {
     const { id } = request.params;
-    console.log("entrou");
     getLinkById(id).then((link) => {
         var _a;
-        console.log(link === null || link === void 0 ? void 0 : link.original_link);
         reply.status(307);
         reply.redirect((_a = link === null || link === void 0 ? void 0 : link.original_link) !== null && _a !== void 0 ? _a : process.env.HOME_URL);
     });

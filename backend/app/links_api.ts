@@ -157,9 +157,7 @@ server.delete("/delete/:id", (request, reply) => {
 server.get("/r/:id", (request, reply) => {
     const { id } = request.params as { id: string };
 
-    console.log("entrou");
     getLinkById(id).then((link) => {
-        console.log(link?.original_link);
         reply.status(307);
         reply.redirect(link?.original_link ?? process.env.HOME_URL!);
     });

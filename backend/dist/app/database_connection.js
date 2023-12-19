@@ -66,7 +66,7 @@ const saveLink = (link) => __awaiter(void 0, void 0, void 0, function* () {
         const createdLink = prisma.links.create({
             data: {
                 id: generatedId,
-                shortened_link: `http://127.0.0.48:3000/r/${generatedId}`,
+                shortened_link: `${process.env.SERVER_URL}/r/${generatedId}`,
                 original_link: link,
             },
         });
