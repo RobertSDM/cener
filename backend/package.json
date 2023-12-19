@@ -7,7 +7,7 @@
     "scripts": {
         "start:server": "node dist/app/links_api.js",
         "start:tsc": "tsc --watch",
-        "build": "npx prisma generate && tsc --build --verbose"
+        "build": "npx prisma prisma && tsc --build --verbose"
     },
     "repository": {
         "type": "git",

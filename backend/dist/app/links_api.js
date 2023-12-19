@@ -151,6 +151,7 @@ const startServer = () => {
     try {
         server.listen({
             port: (_a = Number(process.env.PORT)) !== null && _a !== void 0 ? _a : 3000,
+            host: "0.0.0.0",
         });
     }
     catch (err) {
