@@ -30,9 +30,7 @@ server.addHook("onRequest", (request, reply, done) => {
     ];
 
     // Get the first param
-    const currentURL = request.routerPath;
-    console.log(currentURL);
-    console.log("/get/links/:id" === currentURL);
+    const currentURL = request.routeOptions.url;
 
     if (ROUTES_TO_MIDDLEWARE.includes(currentURL)) {
         const { authorization: auth } = request.headers;
@@ -55,17 +53,17 @@ server.addHook("preHandler", (request, reply, done) => {
     const FREE_ROUTES = ["/r/:id"];
 
     const { origin } = request.headers;
-    const currentURL = request.routerPath;
+    const currentURL = request.routeOptions.url;
 
     if (FREE_ROUTES.includes(currentURL)) {
         reply.header("access-control-allow-origin", "*");
         done();
-    } else if (origin?.length && origin === "127.0.0.1") {
+    } else if (origin?.length && origin === "http://127.0.0.1:5500") {
         done();
     } else {
         reply.statusCode = 401;
         reply.send({
-            Message: "No authorized",
+            Message: "Origin not authorized",
             Content: null,
         });
         done();
@@ -159,8 +157,10 @@ server.delete("/delete/:id", (request, reply) => {
 server.get("/r/:id", (request, reply) => {
     const { id } = request.params as { id: string };
 
+    console.log("entrou");
     getLinkById(id).then((link) => {
-        reply.status(200);
+        console.log(link?.original_link);
+        reply.status(307)
         reply.redirect(link?.original_link ?? process.env.HOME_URL!);
     });
 });
