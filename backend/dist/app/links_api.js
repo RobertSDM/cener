@@ -147,11 +147,10 @@ server.get("/r/:id", (request, reply) => {
     });
 });
 const startServer = () => {
-    var _a, _b;
+    var _a;
     try {
         server.listen({
             port: (_a = Number(process.env.PORT)) !== null && _a !== void 0 ? _a : 3000,
-            host: (_b = process.env.HOST) !== null && _b !== void 0 ? _b : "127.0.0.48",
         });
     }
     catch (err) {
