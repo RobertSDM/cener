@@ -85,6 +85,8 @@ const handleSubmit = (event) => {
 
     const timer = addLoadAnimation();
 
+    copyShortLink.classList.add("hidden")
+
     if (validadeLink(link)) {
         createLink(link).then((res) => {
             CREATING_STATUS = "COMPLETED";
