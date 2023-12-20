@@ -3,7 +3,7 @@
 Creates a short version of the link for better vizualization, for sharing and saving. <br/>
 The shortener works by, saving the original link, and creating a short version for it, that ween accessed will redirect the user with the original link.
 
-This repositorie is hosted on [render](https://render.com/)
+The backend is hosted on render. Backend **[LINK](https://cener.onrender.com/)**
 
 ## Getting Started
 
@@ -61,6 +61,16 @@ cd ./../backend
 ## About the API's
 
 The response come in the json format, with the content being: {Message: string, Content: object | null}
+
+There are five routes:
+
+-   GET -- /get/links
+-   GET -- /get/links/:id
+-   GET -- /r/:id &emsp; &emsp;&emsp;// This route is the redirect route, the "r" is from "redirect" is writen like that for short even more the link
+-   POST -- /create
+-   DELETE -- /delete/:id
+
+---
 
 ### To be added
 
