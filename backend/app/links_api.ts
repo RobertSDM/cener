@@ -21,7 +21,7 @@ server.register(fastifyMiddie).register(fastifyCors, {
 });
 
 // Hook to handle the authorization
-server.addHook("onRequest", (request, reply, done) => {
+server.addHook("preValidation", (request, reply, done) => {
     const ROUTES_TO_MIDDLEWARE = [
         "/get/links/:id",
         "/get/links",
@@ -47,7 +47,7 @@ server.addHook("onRequest", (request, reply, done) => {
 });
 
 // Hook to handle origin
-server.addHook("preHandler", (request, reply, done) => {
+server.addHook("preValidation", (request, reply, done) => {
     const FREE_ROUTES = ["/r/:id"];
 
     const { origin } = request.headers;
