@@ -38,14 +38,12 @@ server.addHook("onRequest", (request, reply, done) => {
         if (auth === process.env.AUTH_APIS) {
             done();
         } else {
-            reply.statusCode = 401;
-            reply.send({
+            return reply.code(401).send({
                 Message: "No authorized",
                 Content: null,
             });
         }
     }
-    done();
 });
 
 // Hook to handle origin
@@ -56,111 +54,96 @@ server.addHook("preHandler", (request, reply, done) => {
     const currentURL = request.routeOptions.url;
 
     if (FREE_ROUTES.includes(currentURL)) {
-        reply.header("access-control-allow-origin", "*");
-        done();
+        return reply.header("access-control-allow-origin", "*");
     } else if (origin?.length && origin === process.env.HOME_URL) {
         done();
     } else {
-        reply.statusCode = 401;
-        reply.send({
+        return reply.code(401).send({
             Message: "Origin not authorized",
             Content: null,
         });
-        done();
     }
 });
 
 // Endpoint to get all the links with limit
-server.get("/get/links", (request, reply) => {
+server.get("/get/links", async (request, reply) => {
     const { limit } = request.query as { limit: string };
 
-    getAllLinks(Number(limit)).then((links) => {
-        if (links) {
-            reply.statusCode = 200;
-            reply.send({
-                Message: "Success",
-                Content: links,
-            });
-        } else {
-            reply.statusCode = 404;
-            reply.send({
-                Message: "No links have been found",
-                Content: null,
-            });
-        }
-    });
+    const links = await getAllLinks(Number(limit));
+    if (links) {
+        return reply.code(200).send({
+            Message: "Success",
+            Content: links,
+        });
+    } else {
+        return reply.code(404).send({
+            Message: "No links have been found",
+            Content: null,
+        });
+    }
 });
 
 // Endpoint to get one link
-server.get("/get/links/:id", (request, reply) => {
+server.get("/get/links/:id", async (request, reply) => {
     const { id } = request.params as { id: string };
 
-    getLinkById(id).then((link) => {
-        if (link) {
-            reply.statusCode = 200;
-            reply.send({
-                Message: "Success",
-                Content: link,
-            });
-        } else {
-            reply.statusCode = 404;
-            reply.send({
-                Message: "No links have been found",
-                Content: null,
-            });
-        }
-    });
+    const link = await getLinkById(id);
+    if (link) {
+        return reply.code(200).send({
+            Message: "Success",
+            Content: link,
+        });
+    } else {
+        return reply.code(404).send({
+            Message: "No links have been found",
+            Content: null,
+        });
+    }
 });
 
 // Endpoint to create a link
-server.post("/create", (request, reply) => {
-    const { originalLink: link } = JSON.parse(request.body as string) as {
+server.post("/create", async (request, reply) => {
+    const { originalLink } = JSON.parse(request.body as string) as {
         originalLink: string;
     };
 
-    saveLink(link).then((res) => {
-        if (res) {
-            reply.statusCode = 201;
-            reply.send({
-                Message: "Link created with success",
-                Content: res,
-            });
-        } else {
-            reply.statusCode = 500;
-            reply.send({
-                Message: "An error has ocurred while creating",
-                Content: null,
-            });
-        }
-    });
+    const link = await saveLink(originalLink);
+    if (link) {
+        return reply.code(201).send({
+            Message: "Link created with success",
+            Content: link,
+        });
+    } else {
+        return reply.code(500).send({
+            Message: "An error has ocurred while creating",
+            Content: null,
+        });
+    }
 });
 
 // Endpoint to delete a link
-server.delete("/delete/:id", (request, reply) => {
+server.delete("/delete/:id", async (request, reply) => {
     const { id } = request.params as { id: string };
 
-    deleteLink(id).then((link) => {
-        if (!link) {
-            reply.statusCode = 404;
-            reply.send({
-                Message: "No content has been found",
-                Content: null,
-            });
-        } else {
-            reply.statusCode = 204;
-            reply.send();
-        }
-    });
+    const link = await deleteLink(id);
+    if (!link) {
+        return reply.code(404).send({
+            Message: "No content has been found",
+            Content: null,
+        });
+    } else {
+        return reply.code(204).send();
+    }
 });
 
 // Endpoint to redirect
-server.get("/r/:id", (request, reply) => {
+server.get("/r/:id", async (request, reply) => {
     const { id } = request.params as { id: string };
 
-    getLinkById(id).then((link) => {
-        reply.status(307);
-        reply.redirect(link?.original_link ?? process.env.HOME_URL!);
-    });
+    const link = await getLinkById(id);
+    return reply
+        .code(307)
+        .redirect(link?.original_link ?? process.env.HOME_URL!);
 });
 
 const startServer = () => {
