@@ -23,7 +23,8 @@ The frontend was made using the framework Vitejs, fully responsive, using the pr
 ## About the backend
 
 The backend was made using typescript, having the tsc as the compiler, it is published on render. The API is made using the fastify library. Has authentication to access the routes (except the **/r/:id** route) and CORS for accessing the routes (except the **/r/:id** route).<br>
-This project uses Prisma to manage the database, build in PostgreSQL.
+This project uses Prisma to manage the database, build in PostgreSQL.<br>
+Redirecting may take a few seconds, especially the first time. This delay is due to the hosting service on Render.
 
 ## About the API's
 
