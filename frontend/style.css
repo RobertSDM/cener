@@ -6,7 +6,7 @@
 }
 
 :root {
-  font-family: "Roboto", sans-serif;
+    font-family: "Roboto", sans-serif;
 }
 
 html,
@@ -63,7 +63,9 @@ body {
 }
 
 #__container-link {
-    justify-content: center;
+    align-items: center;
+    row-gap: 0.5rem;
+    flex-direction: column;
     margin-top: 2.5rem;
 }
 
@@ -130,6 +132,11 @@ body {
         transform: translate(-50%, -50%) rotate(360deg) scale(1);
     }
 }
+
+#__show_message {
+    color: rgba(0, 0, 0, 0.8);
+}
+
 .show-flex {
     display: flex;
 }

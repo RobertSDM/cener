@@ -18,10 +18,10 @@ const containerShowLinks = `
     <div id="__container-show-short-link">
         <span id="__show_short-link"></span>
         <button
-            id="__copy_short-link"
-            class="__transparent_bg_button hidden"
+        id="__copy_short-link"
+        class="__transparent_bg_button hidden"
         >
-            <i class="fa-regular fa-copy"></i>
+        <i class="fa-regular fa-copy"></i>
         </button>
     </div>`;
 
@@ -32,5 +32,6 @@ app.innerHTML = `
         ${form}
         <div id="__container-link" class="hidden">
             ${containerShowLinks}
+            <div id="__show_message">This can take some seconds</div>
         </div>
 `;

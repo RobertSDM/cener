@@ -3,6 +3,7 @@ const linkInput = document.getElementById("__link_input");
 const showShortLinkEl = document.getElementById("__show_short-link");
 const copyShortLink = document.getElementById("__copy_short-link");
 const containerLink = document.getElementById("__container-link");
+const showMessage = document.getElementById("__show_message");
 
 /**
  * @type {"NOT_STARTED" | "ON_GOING" | "COMPLETED"}
@@ -53,6 +54,7 @@ const validadeLink = (link) => {
 const addLoadAnimation = () => {
     showShortLinkEl.style["color"] = "black";
     showShortLinkEl.innerText = "creating";
+    showMessage.classList.remove("hidden");
     let dots = "";
 
     let timer;
@@ -85,13 +87,14 @@ const handleSubmit = (event) => {
 
     const timer = addLoadAnimation();
 
-    copyShortLink.classList.add("hidden")
+    copyShortLink.classList.add("hidden");
 
     if (validadeLink(link)) {
         createLink(link).then((res) => {
             CREATING_STATUS = "COMPLETED";
             clearInterval(timer);
             if (res) {
+                showMessage.classList.add("hidden");
                 showShortLinkEl.innerText = res["Content"].shortened_link;
                 copyShortLink.classList.remove("hidden");
                 copyShortLink.classList.add("show-block");
