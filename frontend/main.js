@@ -32,6 +32,6 @@ app.innerHTML = `
         ${form}
         <div id="__container-link" class="hidden">
             ${containerShowLinks}
-            <div id="__show_message">This can take some seconds</div>
+            <div id="__show_message">The process can take a while</div>
         </div>
 `;
