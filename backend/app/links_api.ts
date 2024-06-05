@@ -17,7 +17,9 @@ app.use(
     cors({
         allowedHeaders: ["*"],
         methods:  ["*"],
-        origin: ["*"]
+        origin: ["*"],
+        credentials: true,
+        preflightContinue: true
     })
 );
 app.use(bodyParser.json())
