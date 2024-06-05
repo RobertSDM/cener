@@ -23,6 +23,7 @@ const createLink = async (link) => {
             }),
             headers: {
                 authorization: import.meta.env.VITE_AUTH_APIS,
+                "Access-Control-Allow-Origin": "*",
             },
         });
 
