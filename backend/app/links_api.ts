@@ -23,9 +23,13 @@ const corsConfig = {
 app.use(
     cors(corsConfig)
 )
-app.options("", cors(corsConfig))
 app.use(bodyParser.json())
-
+app.options("/**/*", (req, res) => {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
+    res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+    res.sendStatus(204);
+});
 // Hook to handle the authorization
 app.use((req, res, next) => {
     const ROUTES_TO_MIDDLEWARE = [
@@ -36,6 +40,7 @@ app.use((req, res, next) => {
 
     // Extrai a URL atual
     const currentURL = req.url;
+
 
     // Verifica se a URL atual corresponde a algum padrão na lista
     const routeMatches = ROUTES_TO_MIDDLEWARE.some((route) => {
@@ -84,7 +89,6 @@ app.use((req, res, next) => {
         });
     }
 });
-
 
 // Endpoint to get all the links with limit
 app.get("/get/links", async (req, res) => {

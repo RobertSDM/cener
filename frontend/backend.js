@@ -22,7 +22,7 @@ const createLink = async (link) => {
                 originalLink: link,
             }),
             headers: {
-                Authorization: import.meta.env.VITE_AUTH_APIS,
+                Authorization: "Bearer 7DcVpXqCftAbl3lFVlBW2WAN",
             },
         });
 
