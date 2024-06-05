@@ -24,11 +24,11 @@ app.use(
     cors(corsConfig)
 )
 app.use(bodyParser.json())
-app.options("/**/*", (req, res) => {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
-    res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
-    res.sendStatus(204);
+app.options("/**/*", ({res}) => {
+    res!.header("Access-Control-Allow-Origin", "*");
+    res!.header("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
+    res!.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+    res!.sendStatus(204);
 });
 // Hook to handle the authorization
 app.use((req, res, next) => {
