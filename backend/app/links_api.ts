@@ -12,16 +12,18 @@ import {
 import { HOST, PORT } from "./utils/index.js";
 
 export const app = express();
+const corsConfig = {
+    allowedHeaders: ["*"],
+    methods: ["*"],
+    origin: ["*"],
+    credentials: true,
+    preflightContinue: true,
+};
 
 app.use(
-    cors({
-        allowedHeaders: ["*"],
-        methods:  ["*"],
-        origin: ["*"],
-        credentials: true,
-        preflightContinue: true
-    })
-);
+    cors(corsConfig)
+)
+app.options("", cors(corsConfig))
 app.use(bodyParser.json())
 
 // Hook to handle the authorization
