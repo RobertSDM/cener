@@ -16,7 +16,7 @@ let CREATING_STATUS = "NOT_STARTED";
 const createLink = async (link) => {
     CREATING_STATUS = "ON_GOING";
     try {
-        const res = await fetch("https://cener.onrender.com/create", {
+        const res = await fetch("https://be-cener.vercel.app/create", {
             method: "POST",
             body: JSON.stringify({
                 originalLink: link,

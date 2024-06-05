@@ -1,8 +1,7 @@
 // Librarys
-import fastify from "fastify";
-// Plugins
-import { fastifyCors } from "@fastify/cors";
-import fastifyMiddie from "@fastify/middie";
+import express from "express";
+import cors from "cors";
+import bodyParser from "body-parser";
 // Modules
 import {
     deleteLink,
@@ -10,73 +9,91 @@ import {
     getLinkById,
     saveLink,
 } from "./database_connection.js";
+import { HOST, PORT } from "./utils/index.js";
 
-const server = fastify({
-    logger: true,
-});
+export const app = express();
 
-server.register(fastifyMiddie).register(fastifyCors, {
-    origin: ["*"],
-    methods: ["POST", "GET", "DELETE"],
-});
+app.use(
+    cors({
+        allowedHeaders: ["*"],
+        methods:  ["*"],
+        origin: ["*"]
+    })
+);
+app.use(bodyParser.json())
 
 // Hook to handle the authorization
-server.addHook("preHandler", (request, reply, done) => {
+app.use((req, res, next) => {
     const ROUTES_TO_MIDDLEWARE = [
-        "/get/links/:id",
         "/get/links",
-        "/delete/:id",
+        "/delete",
         "/create",
     ];
 
-    // Get the first param
-    const currentURL = request.routeOptions.url;
+    // Extrai a URL atual
+    const currentURL = req.url;
 
-    if (ROUTES_TO_MIDDLEWARE.includes(currentURL)) {
-        const { authorization: auth } = request.headers;
+    // Verifica se a URL atual corresponde a algum padrão na lista
+    const routeMatches = ROUTES_TO_MIDDLEWARE.some((route) => {
+        return currentURL.startsWith(route);
+    });
+
+    if (routeMatches) {
+        const { authorization: auth } = req.headers;
 
         if (auth === process.env.AUTH_APIS) {
-            done();
+            next();
         } else {
-            return reply.code(401).send({
-                Message: "No authorized",
+            return res.status(401).send({
+                Message: "Not authorized",
                 Content: null,
             });
         }
+    } else {
+        next();
     }
 });
 
+
 // Hook to handle origin
-server.addHook("preHandler", (request, reply, done) => {
-    const FREE_ROUTES = ["/r/:id"];
+app.use((req, res, next) => {
+    const FREE_ROUTES = ["/r/"];
 
-    const { origin } = request.headers;
-    const currentURL = request.routeOptions.url;
+    const { origin } = req.headers;
+    const currentURL = req.url;
 
-    if (FREE_ROUTES.includes(currentURL)) {
-        return reply.header("access-control-allow-origin", "*");
+    // Verifica se a URL atual corresponde a algum padrão na lista
+    const routeMatches = FREE_ROUTES.some((route) => {
+        const regex = new RegExp(`^${route.replace(/:\w+/g, "\\w+")}$`);
+        return regex.test(currentURL);
+    });
+
+    if (routeMatches) {
+        res.header("access-control-allow-origin", "*");
+        next();
     } else if (origin?.length && origin === process.env.HOME_URL) {
-        done();
+        next();
     } else {
-        return reply.code(401).send({
+        return res.status(401).send({
             Message: "Origin not authorized",
             Content: null,
         });
     }
 });
 
+
 // Endpoint to get all the links with limit
-server.get("/get/links", async (request, reply) => {
-    const { limit } = request.query as { limit: string };
+app.get("/get/links", async (req, res) => {
+    const { limit } = req.query as { limit: string };
 
     const links = await getAllLinks(Number(limit));
     if (links) {
-        return reply.code(200).send({
+        return res.status(200).send({
             Message: "Success",
             Content: links,
         });
     } else {
-        return reply.code(404).send({
+        return res.status(404).send({
             Message: "No links have been found",
             Content: null,
         });
@@ -84,17 +101,17 @@ server.get("/get/links", async (request, reply) => {
 });
 
 // Endpoint to get one link
-server.get("/get/links/:id", async (request, reply) => {
-    const { id } = request.params as { id: string };
+app.get("/get/links/:id", async (req, res) => {
+    const { id } = req.params as { id: string };
 
     const link = await getLinkById(id);
     if (link) {
-        return reply.code(200).send({
+        return res.status(200).send({
             Message: "Success",
             Content: link,
         });
     } else {
-        return reply.code(404).send({
+        return res.status(404).send({
             Message: "No links have been found",
             Content: null,
         });
@@ -102,19 +119,19 @@ server.get("/get/links/:id", async (request, reply) => {
 });
 
 // Endpoint to create a link
-server.post("/create", async (request, reply) => {
-    const { originalLink } = JSON.parse(request.body as string) as {
+app.post("/create", async (req, res) => {
+    const { originalLink } = JSON.parse(req.body as string) as {
         originalLink: string;
     };
 
     const link = await saveLink(originalLink);
     if (link) {
-        return reply.code(201).send({
+        return res.status(201).send({
             Message: "Link created with success",
             Content: link,
         });
     } else {
-        return reply.code(500).send({
+        return res.status(500).send({
             Message: "An error has ocurred while creating",
             Content: null,
         });
@@ -122,39 +139,30 @@ server.post("/create", async (request, reply) => {
 });
 
 // Endpoint to delete a link
-server.delete("/delete/:id", async (request, reply) => {
-    const { id } = request.params as { id: string };
+app.delete("/delete/:id", async (req, res) => {
+    const { id } = req.params as { id: string };
 
     const link = await deleteLink(id);
     if (!link) {
-        return reply.code(404).send({
+        return res.status(404).send({
             Message: "No content has been found",
             Content: null,
         });
     } else {
-        return reply.code(204).send();
+        return res.status(204).send();
     }
 });
 
 // Endpoint to redirect
-server.get("/r/:id", async (request, reply) => {
-    const { id } = request.params as { id: string };
+app.get("/r/:id", async (req, res) => {
+    const { id } = req.params as { id: string };
 
     const link = await getLinkById(id);
-    return reply
-        .code(307)
+    return res
+        .status(307)
         .redirect(link?.original_link ?? process.env.HOME_URL!);
 });
 
-const startServer = () => {
-    try {
-        server.listen({
-            port: Number(process.env.PORT) ?? 3000,
-            host: "0.0.0.0",
-        });
-    } catch (err) {
-        console.error(err);
-    }
-};
-
-startServer();
+app.listen(PORT, HOST, () => {
+    console.log(`Server started at ${HOST}:${PORT}`)
+})
