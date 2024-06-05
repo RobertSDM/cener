@@ -41,7 +41,7 @@ app.use((req, res, next) => {
     });
 
     if (routeMatches) {
-        const { authorization: auth } = req.headers;
+        const { Authorization: auth } = req.headers;
 
         if (auth === process.env.AUTH_APIS) {
             next();
