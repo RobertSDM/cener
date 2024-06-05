@@ -50,23 +50,19 @@ app.use((req, res, next) => {
 app.use((req, res, next) => {
     const FREE_ROUTES = ["/r/"];
 
-    const { origin } = req.headers;
     const currentURL = req.url;
 
     // Verifica se a URL atual corresponde a algum padrão na lista
     const routeMatches = FREE_ROUTES.some((route) => {
-        const regex = new RegExp(`^${route.replace(/:\w+/g, "\\w+")}$`);
-        return regex.test(currentURL);
+        return currentURL.startsWith(route);
     });
 
     if (routeMatches) {
         res.header("access-control-allow-origin", "*");
         next();
-    } else if (origin?.length && origin === process.env.HOME_URL) {
-        next();
     } else {
-        return res.status(401).send({
-            Message: "Origin not authorized",
+        return res.status(400).send({
+            Message: "sla",
             Content: null,
         });
     }
