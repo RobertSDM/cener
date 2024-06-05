@@ -12,6 +12,7 @@ import { HOST, PORT } from "./utils/index.js";
 
 export const app = express();
 app.use(bodyParser.json())
+
 // Hook to handle the authorization
 app.use((req, res, next) => {
     const ROUTES_TO_MIDDLEWARE = [
@@ -22,7 +23,6 @@ app.use((req, res, next) => {
 
     // Extrai a URL atual
     const currentURL = req.url;
-
 
     // Verifica se a URL atual corresponde a algum padrão na lista
     const routeMatches = ROUTES_TO_MIDDLEWARE.some((route) => {
@@ -58,13 +58,9 @@ app.use((req, res, next) => {
     });
 
     if (routeMatches) {
-        res.header("access-control-allow-origin", "*");
         next();
     } else {
-        return res.status(400).send({
-            Message: "sla",
-            Content: null,
-        });
+        return res.redirect("https://cener.vercel.app/")
     }
 });
 
