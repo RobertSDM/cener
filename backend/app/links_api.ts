@@ -145,6 +145,13 @@ app.get("/r/:id", async (req, res) => {
         .redirect(link?.original_link ?? process.env.HOME_URL!);
 });
 
-app.listen(PORT, HOST, () => {
-    console.log(`Server started at ${HOST}:${PORT}`)
-})
+if(HOST){
+    app.listen(PORT, HOST, () => {
+        console.log(`Server started at ${HOST}:${PORT}`)
+    })
+}else{
+    app.listen(PORT, () => {
+        console.log(`Server started at ${HOST}:${PORT}`)
+    })
+    
+}
