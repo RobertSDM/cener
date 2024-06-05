@@ -22,7 +22,8 @@ const corsConfig = {
     preflightContinue: true,
 };
 
-app.options("/*", cors(corsConfig))
+app.options("/**/*", cors(corsConfig))
+
 // Hook to handle the authorization
 app.use((req, res, next) => {
     const ROUTES_TO_MIDDLEWARE = [
