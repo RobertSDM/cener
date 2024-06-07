@@ -8,21 +8,10 @@ import {
     getLinkById,
     saveLink,
 } from "./database_connection.js";
-import cors from "cors"
 import { HOST, PORT } from "./utils/index.js";
 
 export const app = express();
 app.use(bodyParser.json())
-
-const corsConfig = {
-    allowedHeaders: ["*"],
-    methods: ["*"],
-    origin: ["*"],
-    credentials: true,
-    preflightContinue: true,
-};
-
-app.options("/**/*", cors(corsConfig))
 
 // Hook to handle the authorization
 app.use((req, res, next) => {
@@ -164,5 +153,4 @@ if(HOST){
     app.listen(PORT, () => {
         console.log(`Server started at ${HOST}:${PORT}`)
     })
-    
 }
