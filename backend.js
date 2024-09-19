@@ -6,23 +6,24 @@ const containerLink = document.getElementById("__container-link");
 const showMessage = document.getElementById("__show_message");
 
 /**
- * @type {"NOT_STARTED" | "ON_GOING" | "COMPLETED"}
+ * @type {boolean}
  */
-let CREATING_STATUS = "NOT_STARTED";
+let is_loading = false;
 
 /**
  * @param {string} link
  */
 const createLink = async (link) => {
-    CREATING_STATUS = "ON_GOING";
+    is_loading = false;
     try {
-        const res = await fetch("https://be-cener.vercel.app/create", {
+        const res = await fetch("http://127.0.0.1:4550/create", {
             method: "POST",
             body: JSON.stringify({
                 originalLink: link,
             }),
             headers: {
-                Authorization: "Bearer 7DcVpXqCftAbl3lFVlBW2WAN",
+                Authorization: `${import.meta.env.VITE_API_TOKEN}`,
+                "Content-Type": "application/json",
             },
         });
 
@@ -37,6 +38,7 @@ const createLink = async (link) => {
     } catch (err) {
         showShortLinkEl.innerText = "An error ocurred, try again";
         showShortLinkEl.style["color"] = "red";
+        return null;
     }
 };
 
@@ -79,7 +81,7 @@ const handleSubmit = (event) => {
     containerLink.classList.remove("hidden");
     containerLink.classList.add("show-flex");
 
-    if (CREATING_STATUS === "ON_GOING") {
+    if (is_loading) {
         return;
     }
 
@@ -91,11 +93,11 @@ const handleSubmit = (event) => {
 
     if (validadeLink(link)) {
         createLink(link).then((res) => {
-            CREATING_STATUS = "COMPLETED";
+            is_loading = false;
             clearInterval(timer);
             if (res) {
                 showMessage.classList.add("hidden");
-                showShortLinkEl.innerText = res["Content"].shortened_link;
+                showShortLinkEl.innerText = res.shortened_link;
                 copyShortLink.classList.remove("hidden");
                 copyShortLink.classList.add("show-block");
             } else {
